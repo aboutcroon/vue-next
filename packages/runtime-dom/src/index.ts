@@ -56,6 +56,7 @@ export const hydrate = ((...args) => {
   ensureHydrationRenderer().hydrate(...args)
 }) as RootHydrateFunction
 
+// createApp 主要做了两件事情：创建 app 对象和重写 app.mount 方法
 export const createApp = ((...args) => {
   const app = ensureRenderer().createApp(...args)
 
@@ -66,7 +67,7 @@ export const createApp = ((...args) => {
 
   const { mount } = app
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
-    const container = normalizeContainer(containerOrSelector)
+    const container = normalizeContainer(containerOrSelector) // 这里可以传字符串选择器或者 DOM 对象，但如果是字符串选择器，就需要把它转成 DOM 对象，作为最终挂载的容器
     if (!container) return
 
     const component = app._component

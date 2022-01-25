@@ -278,6 +278,7 @@ export function createAppAPI<HostElement>(
         isHydrate?: boolean,
         isSVG?: boolean
       ): any {
+        // 通过 isMounted 变量来控制只 mount 一次
         if (!isMounted) {
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
