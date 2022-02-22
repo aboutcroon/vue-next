@@ -365,8 +365,8 @@ function baseCreateRenderer(
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
   const patch: PatchFn = (
-    n1,
-    n2,
+    n1, // 旧节点
+    n2, // 新节点
     container,
     anchor = null,
     parentComponent = null,
@@ -859,6 +859,7 @@ function baseCreateRenderer(
       }
     } else if (!optimized) {
       // full diff
+      // 更新子节点
       patchChildren(
         n1,
         n2,
@@ -879,6 +880,7 @@ function baseCreateRenderer(
       // (i.e. at the exact same position in the source template)
       if (patchFlag & PatchFlags.FULL_PROPS) {
         // element props contain dynamic keys, full diff needed
+        // 更新 props
         patchProps(
           el,
           n2,
@@ -1318,6 +1320,7 @@ function baseCreateRenderer(
   ) => {
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
+        // 渲染组件
         let vnodeHook: VNodeHook | null | undefined
         const { el, props } = initialVNode
         const { bm, m, parent } = instance
@@ -1453,10 +1456,11 @@ function baseCreateRenderer(
         // #2458: deference mount-only object parameters to prevent memleaks
         initialVNode = container = anchor = null as any
       } else {
+        // 更新组件
         // updateComponent
         // This is triggered by mutation of component's own state (next: null)
         // OR parent calling processComponent (next: VNode)
-        let { next, bu, u, parent, vnode } = instance
+        let { next, bu, u, parent, vnode } = instance // next 表示新的组件 vnode
         let originNext = next
         let vnodeHook: VNodeHook | null | undefined
         if (__DEV__) {
@@ -1466,9 +1470,10 @@ function baseCreateRenderer(
         // Disallow component effect recursion during pre-lifecycle hooks.
         effect.allowRecurse = false
 
+        // next 表示新的组件 vnode
         if (next) {
           next.el = vnode.el
-          updateComponentPreRender(instance, next, optimized)
+          updateComponentPreRender(instance, next, optimized) // 更新组件 vnode 节点信息
         } else {
           next = vnode
         }
@@ -1494,17 +1499,17 @@ function baseCreateRenderer(
         if (__DEV__) {
           startMeasure(instance, `render`)
         }
-        const nextTree = renderComponentRoot(instance)
+        const nextTree = renderComponentRoot(instance) // 渲染新的子树 vnode
         if (__DEV__) {
           endMeasure(instance, `render`)
         }
-        const prevTree = instance.subTree
-        instance.subTree = nextTree
+        const prevTree = instance.subTree // 缓存旧的子树 vnode
+        instance.subTree = nextTree // 更新子树 vnode
 
         if (__DEV__) {
           startMeasure(instance, `patch`)
         }
-        patch(
+        patch( // 组件更新核心逻辑，根据新旧子树 vnode 做 patch
           prevTree,
           nextTree,
           // parent may have changed if it's in a teleport
@@ -1518,7 +1523,7 @@ function baseCreateRenderer(
         if (__DEV__) {
           endMeasure(instance, `patch`)
         }
-        next.el = nextTree.el
+        next.el = nextTree.el // 缓存更新后的 DOM 节点
         if (originNext === null) {
           // self-triggered update. In case of HOC, update parent component
           // vnode el. HOC is indicated by parent instance's subTree pointing
