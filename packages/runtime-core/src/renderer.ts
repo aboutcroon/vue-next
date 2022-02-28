@@ -1213,7 +1213,7 @@ function baseCreateRenderer(
       __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
     const instance: ComponentInternalInstance =
       compatMountInstance ||
-      (initialVNode.component = createComponentInstance(
+      (initialVNode.component = createComponentInstance( // 创建组件实例
         initialVNode,
         parentComponent,
         parentSuspense
@@ -1238,7 +1238,7 @@ function baseCreateRenderer(
       if (__DEV__) {
         startMeasure(instance, `init`)
       }
-      setupComponent(instance)
+      setupComponent(instance) // 设置组件实例
       if (__DEV__) {
         endMeasure(instance, `init`)
       }

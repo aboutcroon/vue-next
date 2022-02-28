@@ -575,10 +575,11 @@ export function setupComponent(
   isInSSRComponentSetup = isSSR
 
   const { props, children } = instance.vnode
-  const isStateful = isStatefulComponent(instance)
-  initProps(instance, props, isStateful, isSSR)
-  initSlots(instance, children)
+  const isStateful = isStatefulComponent(instance) // 判断是否是一个有状态的组件
+  initProps(instance, props, isStateful, isSSR) // 初始化 props
+  initSlots(instance, children) // 初始化 slots
 
+  // 设置有状态的组件实例
   const setupResult = isStateful
     ? setupStatefulComponent(instance, isSSR)
     : undefined
@@ -617,21 +618,26 @@ function setupStatefulComponent(
     }
   }
   // 0. create render proxy property access cache
+  // 创建渲染代理的属性访问缓存
   instance.accessCache = Object.create(null)
   // 1. create public instance / render proxy
   // also mark it raw so it's never observed
+  // 创建渲染上下文代理
   instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))
   if (__DEV__) {
     exposePropsOnRenderContext(instance)
   }
   // 2. call setup()
+  // 判断处理 setup 函数
   const { setup } = Component
   if (setup) {
+    // 如果 setup 函数带参数，则创建一个 setupContext
     const setupContext = (instance.setupContext =
       setup.length > 1 ? createSetupContext(instance) : null)
 
     setCurrentInstance(instance)
     pauseTracking()
+    // 执行 setup 函数，获取结果
     const setupResult = callWithErrorHandling(
       setup,
       instance,
@@ -664,9 +670,11 @@ function setupStatefulComponent(
         )
       }
     } else {
+      // 处理 setup 执行结果
       handleSetupResult(instance, setupResult, isSSR)
     }
   } else {
+    // 完成组件实例设置
     finishComponentSetup(instance, isSSR)
   }
 }
