@@ -26,6 +26,7 @@ import { ssrTransformShow } from './transforms/ssrVShow'
 import { ssrInjectFallthroughAttrs } from './transforms/ssrInjectFallthroughAttrs'
 import { ssrInjectCssVars } from './transforms/ssrInjectCssVars'
 
+// ssr 模版编译的入口
 export function compile(
   template: string,
   options: CompilerOptions = {}

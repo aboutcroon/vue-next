@@ -56,6 +56,7 @@ export function getBaseTransformPreset(
   ]
 }
 
+// 真正的编译过程都在 baseCompile 函数里执行
 // we name it `baseCompile` so that higher order compilers like
 // @vue/compiler-dom can export `compile` while re-exporting everything else.
 export function baseCompile(
@@ -82,25 +83,28 @@ export function baseCompile(
     onError(createCompilerError(ErrorCodes.X_SCOPE_ID_NOT_SUPPORTED))
   }
 
+  // 1. 解析 template 生成 AST
   const ast = isString(template) ? baseParse(template, options) : template
+  // 2. AST 转换（为了添加编译优化的相关属性）
   const [nodeTransforms, directiveTransforms] =
     getBaseTransformPreset(prefixIdentifiers)
-  transform(
+  transform( 
     ast,
     extend({}, options, {
       prefixIdentifiers,
       nodeTransforms: [
         ...nodeTransforms,
-        ...(options.nodeTransforms || []) // user transforms
+        ...(options.nodeTransforms || []) // user transforms 用户自定义的 transform
       ],
       directiveTransforms: extend(
         {},
         directiveTransforms,
-        options.directiveTransforms || {} // user transforms
+        options.directiveTransforms || {} // user transforms 用户自定义的 transform
       )
     })
   )
-
+  
+  // 3. 生成代码
   return generate(
     ast,
     extend({}, options, {

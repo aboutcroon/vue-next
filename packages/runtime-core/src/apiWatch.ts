@@ -64,11 +64,11 @@ type MapSources<T, Immediate> = {
 
 type InvalidateCbRegistrator = (cb: () => void) => void
 
-export interface WatchOptionsBase extends DebuggerOptions {
+export interface WatchOptionsBase extends DebuggerOptions { // watchEffect 的参数只有这一个
   flush?: 'pre' | 'post' | 'sync'
 }
 
-export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase {
+export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase { // watch 的参数有三个
   immediate?: Immediate
   deep?: boolean
 }

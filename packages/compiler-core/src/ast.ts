@@ -593,7 +593,7 @@ export function createVNodeCall(
   }
 
   return {
-    type: NodeTypes.VNODE_CALL,
+    type: NodeTypes.VNODE_CALL, /* VNODE_CALL 的 type 是 13 */
     tag,
     props,
     children,
